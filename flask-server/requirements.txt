@@ -17,3 +17,7 @@ python-dotenv
 # Embedding + vector DB
 openai
 faiss-cpu
+
+#SQL-Database
+flask_sqlalchemy
+psycopg2-binary
