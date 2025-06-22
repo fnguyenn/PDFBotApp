@@ -1,1 +1,15 @@
+# Ignore all files in the data folder
+data/*
+# But keep the folder itself
+!data/.gitkeep
+# Ignore virtual environments
 venv/
+# Ignore .env file
+.env
+# Python specifics
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+# DS_Store
+.DS_Store

@@ -1,4 +1,5 @@
 flask
+flask-cors
 
 # OCR
 pytesseract
@@ -11,6 +12,7 @@ langchain-core
 langchain-community
 langchain-openai
 langchain-text-splitters
+python-dotenv
 
 # Embedding + vector DB
 openai
