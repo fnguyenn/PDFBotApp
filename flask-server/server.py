@@ -2,7 +2,7 @@ from flask import Flask
 
 app = Flask(__name__)
 
-# members API route
+# API routes
 @app.route("/members")
 def members():
     return {"members": ["Member1", "Member2", "Member3"]}
