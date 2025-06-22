@@ -1,0 +1,17 @@
+flask
+
+# OCR
+pytesseract
+Pillow
+PyMuPDF
+
+# LangChain core + plugins
+langchain
+langchain-core
+langchain-community
+langchain-openai
+langchain-text-splitters
+
+# Embedding + vector DB
+openai
+faiss-cpu
