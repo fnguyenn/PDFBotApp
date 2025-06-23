@@ -3,6 +3,13 @@ from werkzeug.utils import secure_filename
 from flask_cors import CORS
 import os
 
+# PostgreSQL DB
+from dotenv import load_dotenv
+load_dotenv()
+from db import db
+from models import Document
+from models import QuestionLog
+
 # Import OCR and Q&A logic from your services
 from services.ocr_utils import extract_text_from_pdf, extract_text_from_image
 from services.langchain_pipeline import build_qa_chain
@@ -11,13 +18,19 @@ app = Flask(__name__)
 CORS(app)
 os.makedirs("data", exist_ok=True)
 
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+db.init_app(app)
+
 # Global variable to cache the chain
 qa_chain = None
+uploaded_docs = []  # list of Document instances from last upload
 
 # Define a routes to handle POST requests
 @app.route("/upload", methods=["POST"])
 def upload():
     global qa_chain
+    uploaded_docs.clear()
 
     try:
         uploaded_files = request.files.getlist("files")
@@ -38,6 +51,11 @@ def upload():
                 text = extract_text_from_image(filepath)
             else:
                 continue  # Skip unsupported files
+
+            doc = Document(filename=filename)
+            db.session.add(doc)
+            db.session.commit()
+            uploaded_docs.append(doc)
 
             combined_text += text + "\n\n"
 
@@ -70,6 +88,11 @@ def ask():
             return jsonify({"error": "Question is empty"}), 400
 
         answer = qa_chain.invoke(question)
+
+        qlog = QuestionLog(question=question, answer=answer, documents=uploaded_docs)
+        db.session.add(qlog)
+        db.session.commit()
+
         return jsonify({"answer": answer})
 
     except Exception as e:
