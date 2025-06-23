@@ -1,7 +1,3 @@
-# Ignore all files in the data folder
-data/*
-# But keep the folder itself
-!data/.gitkeep
 # Ignore virtual environments
 venv/
 # Ignore .env file
