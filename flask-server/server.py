@@ -6,9 +6,9 @@ import os
 # PostgreSQL DB
 from dotenv import load_dotenv
 load_dotenv()
-from db import db
-from models import Document
-from models import QuestionLog
+from database.db import db
+from database.models import Document
+from database.models import QuestionLog
 
 # Import OCR and Q&A logic from your services
 from services.ocr_utils import extract_text_from_pdf, extract_text_from_image
@@ -18,6 +18,7 @@ app = Flask(__name__)
 CORS(app)
 os.makedirs("data", exist_ok=True)
 
+# configures database
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db.init_app(app)
@@ -26,7 +27,7 @@ db.init_app(app)
 qa_chain = None
 uploaded_docs = []  # list of Document instances from last upload
 
-# Define a routes to handle POST requests
+# Uploaded files gets saved to database and qa_chain is created
 @app.route("/upload", methods=["POST"])
 def upload():
     global qa_chain
@@ -72,7 +73,9 @@ def upload():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
+    
+# asks question to llm, and uses it to respond to the user
+# saves question according to the files saved
 @app.route("/ask", methods=["POST"])
 def ask():
     global qa_chain
