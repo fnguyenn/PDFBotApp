@@ -17,6 +17,7 @@ python-dotenv
 # Embedding + vector DB
 openai
 faiss-cpu
+bcrypt
 
 #SQL-Database
 flask_sqlalchemy
